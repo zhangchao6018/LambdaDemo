@@ -14,6 +14,7 @@ import java.util.List;
  **/
 public class Testlambda {
     List<Employee> emps = Arrays.asList(
+
             new Employee(102, "李四", 59, 6666.66),
             new Employee(101, "张三", 18, 9999.99),
             new Employee(103, "王五", 28, 3333.33),
