@@ -91,6 +91,7 @@ public class TestStreamAPI1 {
 				if(x.getAge() == y.getAge()){
 					return x.getName().compareTo(y.getName());
 				}else{
+					// 如果根据年龄降序排列，只需return前面加个'-'
 					return Integer.compare(x.getAge(), y.getAge());
 				}
 			}).forEach(System.out::println);
