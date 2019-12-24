@@ -17,10 +17,10 @@ public class TestStreamAPI3 {
 			new Employee(104, "赵六", 8, 7777.77, Status.FREE),
 			new Employee(105, "田七", 38, 5555.55, Status.BUSY)
 	);
-	
+
 	//3. 终止操作
 	/*
-		归约
+		归约  规约函数->
 		reduce(T identity, BinaryOperator) / reduce(BinaryOperator) ——可以将流中元素反复结合起来，得到一个值。
 	 */
 	@Test
@@ -29,9 +29,19 @@ public class TestStreamAPI3 {
 		
 		Integer sum = list.stream()
 			.reduce(0, (x, y) -> x + y);
-		
 		System.out.println(sum);
-		
+
+		//工资求和（可配合filter）
+		Optional<Double> reduce = emps.stream().map(Employee::getSalary).reduce((x, y) -> x + y);
+		System.out.println("规约求和："+reduce.get());
+
+		Optional<Double> reduce1 = emps.stream()
+				.filter((e) -> e.getAge() > 18)
+				.map(Employee::getSalary)
+				.reduce((x, y) -> x + y);
+		System.out.println("先过滤再规约求和："+reduce1.get());
+
+
 		System.out.println("----------------------------------------");
 		
 		Optional<Double> op = emps.stream()
@@ -50,62 +60,78 @@ public class TestStreamAPI3 {
 			.map((ch) -> {
 				if(ch.equals('六'))
 					return 1;
-				else 
+				else
 					return 0;
 			}).reduce(Integer::sum);
 		
 		System.out.println(sum.get());
 	}
-	
+
+
 	//collect——将流转换为其他形式。接收一个 Collector接口的实现，用于给Stream中元素做汇总的方法
 	@Test
 	public void test3(){
+		System.out.println("-----------------收集到list-----------------");
+		//收集到list
 		List<String> list = emps.stream()
 			.map(Employee::getName)
 			.collect(Collectors.toList());
 		
 		list.forEach(System.out::println);
-		
-		System.out.println("----------------------------------");
-		
+		Set set1 = new HashSet();
+		list.forEach((x)->set1.add(x));
+		System.out.println(set1);
+		System.out.println("-----------------收集到set-----------------");
+
+		//收集到set
 		Set<String> set = emps.stream()
 			.map(Employee::getName)
 			.collect(Collectors.toSet());
 		
 		set.forEach(System.out::println);
 
-		System.out.println("----------------------------------");
-		
+		System.out.println("--------------收集到指定类型的容器对象--------------------");
+
+		//收集到指定类型的容器对象
 		HashSet<String> hs = emps.stream()
 			.map(Employee::getName)
 			.collect(Collectors.toCollection(HashSet::new));
 		
 		hs.forEach(System.out::println);
+
+		System.out.println("--------------收集到指定类型的容器对象--------------------");
+		Set<String> collect = emps.stream().map(Employee::getName).collect(Collectors.toCollection(LinkedHashSet::new));
+		collect.forEach(System.out::println);
+
 	}
 	
 	@Test
 	public void test4(){
+		//最大值的值
 		Optional<Double> max = emps.stream()
 			.map(Employee::getSalary)
 			.collect(Collectors.maxBy(Double::compare));
-		
+
 		System.out.println(max.get());
-		
+
+		//最小值的对象
 		Optional<Employee> op = emps.stream()
 			.collect(Collectors.minBy((e1, e2) -> Double.compare(e1.getSalary(), e2.getSalary())));
 		
 		System.out.println(op.get());
-		
+
+		//求和
 		Double sum = emps.stream()
 			.collect(Collectors.summingDouble(Employee::getSalary));
 		
 		System.out.println(sum);
-		
+
+		//平均值
 		Double avg = emps.stream()
 			.collect(Collectors.averagingDouble(Employee::getSalary));
 		
 		System.out.println(avg);
-		
+		//count
 		Long count = emps.stream()
 			.collect(Collectors.counting());
 		
@@ -126,6 +152,8 @@ public class TestStreamAPI3 {
 			.collect(Collectors.groupingBy(Employee::getStatus));
 		
 		System.out.println(map);
+
+
 	}
 	
 	//多级分组
@@ -171,4 +199,23 @@ public class TestStreamAPI3 {
 		
 		System.out.println(sum.get());
 	}
+
+	//类似mysql聚合函数
+	@Test
+	public void test10(){
+		DoubleSummaryStatistics collect = emps.stream().collect(Collectors.summarizingDouble(Employee::getSalary));
+		System.out.println(collect.getSum());
+		System.out.println(collect.getAverage());
+		System.out.println(collect.getCount());
+		System.out.println(collect.getMax());
+	}
+
+	//连接字符串
+	@Test
+	public void test11(){
+		String collect = emps.stream().map(Employee::getName).collect(Collectors.joining(","));
+		System.out.println(collect);
+	}
+
+
 }
