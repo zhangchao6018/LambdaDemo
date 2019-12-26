@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TestTransaction {
@@ -34,13 +35,14 @@ public class TestTransaction {
 	//1. 找出2011年发生的所有交易， 并按交易额排序（从低到高）
 	@Test
 	public void test1(){
-
+		List<Transaction> collect = transactions.stream().filter((e) -> e.getYear() == 2011).sorted((x, y) -> Integer.compare(x.getValue(), y.getValue())).collect(Collectors.toList());
+		System.out.println(collect);
 	}
 	
 	//2. 交易员都在哪些不同的城市工作过？
 	@Test
 	public void test2(){
-
+//		transactions.stream().map((e)->Trader::getName).
 	}
 	
 	//3. 查找所有来自剑桥的交易员，并按姓名排序
