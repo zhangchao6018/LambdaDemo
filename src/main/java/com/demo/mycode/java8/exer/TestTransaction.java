@@ -42,14 +42,16 @@ public class TestTransaction {
 	//2. 交易员都在哪些不同的城市工作过？
 	@Test
 	public void test2(){
-//		transactions.stream().map((e)->Trader::getName).
-	}
+        List<String> collect = transactions.stream().map((e) -> e.getTrader().getCity()).distinct().collect(Collectors.toList());
+        System.out.println(collect);
+    }
 	
 	//3. 查找所有来自剑桥的交易员，并按姓名排序
 	@Test
 	public void test3(){
-
-	}
+        List<Transaction> cambridge = transactions.stream().filter((e) -> e.getTrader().getCity().equals("Cambridge")).sorted((x, y) -> x.getTrader().getName().compareTo(y.getTrader().getName())).distinct().collect(Collectors.toList());
+        System.out.println(cambridge);
+    }
 	
 	//4. 返回所有交易员的姓名字符串，按字母顺序排序
 	@Test
